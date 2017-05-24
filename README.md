@@ -79,9 +79,9 @@ Connect to the created Azuer SQL database and execute the script to configure ac
 
 `sql/enable-bulk-load.sql`
 
-just customize it with your own info befure running it.
+just customize it with your own info before running it.
 
-Please not that when you specifict the SAS key token, you have to remove the initial question mark (?) that is automatically added
+Please not that when you specific the SAS key token, you have to remove the initial question mark (?) that is automatically added
 when you create the SAS key token online.
 
 ## Create Database Objects
