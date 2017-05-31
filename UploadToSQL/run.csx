@@ -13,7 +13,6 @@ using Dapper;
 
 public static void Run(CloudBlockBlob blob, TraceWriter log)
 {
-    string content = blob.DownloadText();
     string containerName = blob.Container.Name;
     string fileName = blob.Name;
 
