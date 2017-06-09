@@ -1,9 +1,9 @@
 # Upload CSV to SQL Server via Azure Function
 
 A sample template that allows to upload the content of a CSV file to a Azure SQL database as soon as the .csv file is dropped in an Azure Blob Store.
-Following are the instructions you need to follow in order to setup the solution. [Azure CLI 2.0](https://docs.microsoft.com/en-us/cli/azure/get-started-with-azure-cli) commands are also provided as a reference
+Following there are the instructions you need to follow in order to setup the solution. [Azure CLI 2.0](https://docs.microsoft.com/en-us/cli/azure/get-started-with-azure-cli) commands are also provided as a reference
 
-## Autenticate Azure CLI 2.0
+## Authenticate Azure CLI 2.0
 
 Login with your account
 
