@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <AzureFunctionsVersion>v2</AzureFunctionsVersion>
+    <RootNamespace>PASS2019.Microsoft.Samples</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.30" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="3.0.4" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="1.0.19269.1" />    
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.29" />        
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="host.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="local.settings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy $(OutDir)$(ProjectName).deps.json $(OutDir)bin\function.deps.json" />
+  </Target>
+  <Target Name="PostPublish" BeforeTargets="Publish">
+    <Exec Command="copy $(PublishDir)$(ProjectName).deps.json $(PublishDir)bin\function.deps.json" />
+  </Target>
+  <Target Name="PostPublish" AfterTargets="AfterPublish">
+    <Exec Command="move $(PublishDir)\runtimes $(PublishDir)\bin" />
+  </Target>
+</Project>

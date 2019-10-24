@@ -1,12 +1,9 @@
 DROP TABLE IF EXISTS dbo.[FileData]
 GO
 
-BEGIN TRY
-    ALTER TABLE dbo.[File] SET (SYSTEM_VERSIONING = OFF)
-END TRY
-BEGIN CATCH
-	-- Table does not exists: just ignoe the error
-END CATCH
+IF EXISTS(SELECT * FROM sys.tables WHERE [object_id] = OBJECT_ID('dbo.[File]') AND temporal_type = 2) BEGIN
+	ALTER TABLE dbo.[File] SET (SYSTEM_VERSIONING = OFF)
+END
 GO
 
 DROP TABLE IF EXISTS dbo.[FileHistory]
@@ -83,10 +80,10 @@ SELECT
 	TwitterHandle
 FROM OPENROWSET(
 	BULK ''' + @bulkFile  + ''', 
-	DATA_SOURCE = ''CSV-Storage'',
+	DATA_SOURCE = ''Azure-Storage'',
 	FIRSTROW=2,
 	FORMATFILE=''csv/csv.fmt'',
-	FORMATFILE_DATA_SOURCE = ''Storage'') as t
+	FORMATFILE_DATA_SOURCE = ''Azure-Storage'') as t
 ';
 --PRINT @sql;
 EXEC(@sql);

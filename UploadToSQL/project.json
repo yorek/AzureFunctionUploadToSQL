@@ -1,9 +1,0 @@
-﻿{
-  "frameworks": {
-    "net46": {
-      "dependencies": {
-        "Dapper": "1.50.2"
-      }
-    }
-  }
-}
