@@ -15,7 +15,7 @@ GO
 	Create a crendential to store SAS key.
 	To get the SAS key either use Azure Storage Explorer 
 	or AZ CLI:
-	 az storage account generate-sas --account-name <account-name> --permissions rl --services b --resource-types sco --expiry 2020-01-01
+	az storage account generate-sas --account-name <account-name> --permissions rl --services b --resource-types sco --expiry 2020-01-01
 
 */
 CREATE DATABASE SCOPED CREDENTIAL [Storage-Credentials]

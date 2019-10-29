@@ -34,58 +34,52 @@ GO
 CREATE OR ALTER PROCEDURE dbo.SetFileMetadata
 @fileName NVARCHAR(128)
 AS
+	SET XACT_ABORT ON
+	BEGIN TRAN
+		DELETE d FROM dbo.[FileData] d INNER JOIN dbo.[File] f ON d.FileId = f.Id WHERE f.[Name] = @fileName;
+		DELETE d FROM dbo.[File] d WHERE d.Name = @fileName;
 
-SET XACT_ABORT ON
-
-BEGIN TRAN
-
-	DELETE d FROM dbo.[FileData] d INNER JOIN dbo.[File] f ON d.FileId = f.Id WHERE f.[Name] = @fileName
-	DELETE d FROM dbo.[File] d WHERE d.Name = @fileName
-
-	INSERT INTO dbo.[File](Name) OUTPUT inserted.Id VALUES (@fileName)
-
-COMMIT TRAN
-
+		INSERT INTO dbo.[File](Name) OUTPUT inserted.Id VALUES (@fileName);
+	COMMIT TRAN
 GO
 
 CREATE OR ALTER PROCEDURE [dbo].[BulkLoadFromAzure]
 @sourceFileName NVARCHAR(100)
 AS
+	DECLARE @fid INT;
+	DECLARE @fileName NVARCHAR(MAX) = REPLACE(@sourceFileName, '.csv', '');
+	DECLARE @bulkFile NVARCHAR(MAX) =  'csv/' + @sourceFileName;
 
-DECLARE @fid INT;
-DECLARE @fileName NVARCHAR(MAX) = REPLACE(@sourceFileName, '.csv', '');
-DECLARE @bulkFile NVARCHAR(MAX) =  'csv/' + @sourceFileName;
+	DROP TABLE IF EXISTS #Result;
 
-DROP TABLE IF EXISTS #Result;
+	CREATE TABLE #Result(FileID INT);
 
-CREATE TABLE #Result(FileID INT);
+	INSERT INTO #Result EXEC [dbo].[SetFileMetadata] @fileName;
 
-INSERT INTO #Result EXEC [dbo].[SetFileMetadata] @fileName;
+	SELECT TOP 1 @fid = FileID  FROM #Result;
 
-SELECT TOP 1 @fid = FileID  FROM #Result;
-
-DECLARE @sql NVARCHAR(MAX);
-SET @sql = N'
-INSERT INTO dbo.FileData
-(
-	FileId,
-	FirstName, 
-	LastName, 	
-	TwitterHandle
-)
-SELECT 
-	FileId = ' + CAST(@fid AS NVARCHAR(9)) + ',
-	FirstName, 
-	LastName, 	
-	TwitterHandle
-FROM OPENROWSET(
-	BULK ''' + @bulkFile  + ''', 
-	DATA_SOURCE = ''Azure-Storage'',
-	FIRSTROW=2,
-	FORMATFILE=''csv/csv.fmt'',
-	FORMATFILE_DATA_SOURCE = ''Azure-Storage'') as t
-';
---PRINT @sql;
-EXEC(@sql);
+	DECLARE @sql NVARCHAR(MAX);
+	SET @sql = N'
+	INSERT INTO dbo.FileData
+	(
+		FileId,
+		FirstName, 
+		LastName, 	
+		TwitterHandle
+	)
+	SELECT 
+		FileId = ' + CAST(@fid AS NVARCHAR(9)) + ',
+		FirstName, 
+		LastName, 	
+		TwitterHandle
+	FROM OPENROWSET(
+		BULK ''' + @bulkFile  + ''', 
+		DATA_SOURCE = ''Azure-Storage'',
+		FIRSTROW=2,
+		FORMATFILE=''csv/csv.fmt'',
+		FORMATFILE_DATA_SOURCE = ''Azure-Storage'') as t
+	';
+	--PRINT @sql;
+	EXEC(@sql);
 GO
 
