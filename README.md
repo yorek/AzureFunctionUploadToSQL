@@ -29,53 +29,45 @@ Once this is done get the account key and create a container named 'csv':
 
     az storage container create --account-name csvimportdemo --account-key <your-account-key> --name csv
 
-Generate also Shared Access Signature (SAS) key token and store it for later use
+Generate also Shared Access Signature (SAS) key token and store it for later use. The easies way to do this is to use [Azure Storage Explorer](https://azure.microsoft.com/en-us/features/storage-explorer/).
 
-## Create the Function App
+Otherwise you can do it via AZ CLI using the `az storage account generate-sas` command.
 
-At present time Function App cannot be created via the Azure Portal, and you have to do it via Azure CLI:
+## Create and Deploy the function app
 
-    az functionapp create --name CSVImportDemo --storage-account csvimportdemo --consumption-plan-location westus --resource-group CSVImportDemo
+The easiest way to install, build and deploy the sample Function App, is to use [Visual Studio Code](https://code.visualstudio.com/). It will automatically detect that the `.csproj` is related to a FUnction App, will download the Function App runtime and also recommend you to download the Azure Function extension.
 
-## Configure Function App Settings
+Once the project is loaded, add the `AzureSQL` configuration to your `local.settings.json` file:
 
-From the Azure Portal you have to create the following Application Settings for the Function App (Function App is accessible from the App Services blade):
+    "AzureSQL": "<sql-azure-connection-string>"
 
-- SendGrid.Account: `<your-sendgrid-account>`,
-- SendGrid.Password: `<your-sendgrid-account-password>`,
+Also make sure that the Function App is correctly monitoring the Azure Storage Account where you plan to drop you CSV files. If you used Visual Studio code, this should have already been set up for you. If not make sure you have the 'AzureStorage' configuration element in your `local.settings.json` file and that it has the connection string for the Azure Blob Storage account you want to use:
 
-The above values are needed only if you want to receive and email if an unhandled exception happes. In that case you also have to
-
-- Have a working SendGrid service
-- Uncomment line 42 in `run.csx`
-
-and you also the followin connection string is needed:
-
-- SQLAzure: `<sql-azure-connection-string>`
-
-please remember to create that key-value pair in the *Connection String* section.
+    "AzureStorage": "DefaultEndpointsProtocol=https;AccountName=csvimportdemo;AccountKey=[account-key-here];EndpointSuffix=core.windows.net"
 
 ## Create Azure SQL Server and Database
 
 Create an Azure SQL Server:
 
-    az sql server create --name csvimportdemo --resource-group CSVImportDemo --location westus --admin-user csvimportdemo --admin-password csvimportdemoPassw0rd
+    az sql server create --name csvimportdemo --resource-group CSVImportDemo --location westus --admin-user csvimportdemo --admin-password csvimportdemoPassw0rd!
 
 Via the Azure Portal make sure that the firewall is configure to "Allow access to Azure Services".
 
 Also a small Azure SQL Database:
 
-    az sql db create --name CSVImportDemo --resource-group CSVImportDemo --server csvimportdemo --service-objective Basic
+    az sql db create --name CSVImportDemo --resource-group CSVImportDemo --server csvimportdemo
 
 ## Upload format file
 
-Behind the scenes, the solution uses the T-SQL `BULK INSERT` command to import data read from a .csv file. In order to work the command needs a format file named `csv.fmt` in the `csv` container. 
+Behind the scenes, the solution uses the T-SQL `BULK INSERT` command to import data read from a .csv file. In order to work the command needs a format file named `csv.fmt` in the `csv` container.
 
     az storage blob upload --container-name csv --file SQL\csv.fmt --name csv.fmt --account-name csvimportdemo --account-key <your-account-key>
 
+As mentioned before, the easiest way is to use [Azure Storage Explorer](https://azure.microsoft.com/en-us/features/storage-explorer/).
+
 ## Configure Bulk Load Security
 
-Connect to the created Azuer SQL database and execute the script to configure access to blob store for Azure SQL. The script isavailabe here
+Connect to the created Azure SQL database and execute the script to configure access to blob store for Azure SQL. The script is available here
 
 `sql/enable-bulk-load.sql`
 
@@ -86,29 +78,27 @@ when you create the SAS key token online.
 
 ## Create Database Objects
 
-In the Azure SQL database couple of tables and a stored procedures needs also to be created in order to have the sample worlking correctly.
+In the Azure SQL database couple of tables and a stored procedures needs also to be created in order to have the sample working correctly.
 
 Scripts to create the mentioned objects are available in
 
 `sql/create-objects.sql`
 
-Just execute it agains the Azure SQL database.
+Just execute it against the Azure SQL database.
 
-## Create a Function App function
+## Deploy and Run the Function App
 
-From the Azure Portal, go to the Function App blad and create a new fuction named `UploadToSQL` starting from the "BlobTrigger-CSharp" template. After that copy the content of the local `UploadToSQL` folder into the function, replacing the file if they already exists.
-
-Once everything is saved, that function should compile nicely (check the log to make sure of that).
+You can now run the Function app on your machine, or you can deploy using Visual Studio Code and its Azure Function extension. Or you can use `az functionapp` to deploy the function manually.
 
 ## Test the solution
 
-All the CSV  file that will be copied into the `csv` container will be loaded into Azure SQL and specifically into the 
+All the CSV  file that will be copied into the `csv` container will be loaded into Azure SQL and specifically into the following tables:
 
 - File
 - FileData
 
-tables. To test the everything works copy the `test.csv` file to Azure:
+To test the everything works copy the `test.csv` file to Azure:
 
     az storage blob upload --container-name csv --file SQL\test.csv --name test.csv --account-name csvimportdemo --account-key <your-account-key>
 
-if you open Function App Log you will see that the function has been invoked. You will find the content of the `test.csv'` file into Azure SQL.
+if you open Function App Log you will see that the function has been invoked or, if you're running the function locally on your machine, you will see the log directly on the console. You will find the content of the `test.csv'` file into Azure SQL.
