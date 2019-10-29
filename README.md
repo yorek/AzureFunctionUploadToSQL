@@ -2,7 +2,7 @@
 
 A sample template that allows to upload the content of a CSV file to a Azure SQL database as soon as the .csv file is dropped in an Azure Blob Store. Full article is here:
 
-https://medium.com/@mauridb/automatic-import-of-csv-data-using-azure-functions-and-azure-sql-63e1070963cf
+[Automatic import of CSV data using Azure Functions and Azure SQL](https://medium.com/@mauridb/automatic-import-of-csv-data-using-azure-functions-and-azure-sql-63e1070963cf)
 
 Following there are the instructions you need to follow in order to setup the solution. [Azure CLI 2.0](https://docs.microsoft.com/en-us/cli/azure/get-started-with-azure-cli) commands are also provided as a reference
 
