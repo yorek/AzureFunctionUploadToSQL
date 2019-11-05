@@ -1,0 +1,10 @@
+# Install Azure Function 2.0 core tools
+https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local 
+
+# Tell Azure Storage Emulator to initialize and use the existing SQL Server instance
+# (PowerShell)
+& 'C:\Program Files (x86)\Microsoft SDKs\Azure\Storage Emulator\AzureStorageEmulator.exe' init /server localhostt
+
+# Start Azure Storage Emulator 
+# (PowerShell)
+& 'C:\Program Files (x86)\Microsoft SDKs\Azure\Storage Emulator\AzureStorageEmulator.exe' start

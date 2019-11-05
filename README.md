@@ -62,11 +62,11 @@ Also a small Azure SQL Database:
 
 ## Upload format file
 
-Behind the scenes, the solution uses the T-SQL `BULK INSERT` command to import data read from a .csv file. In order to work the command needs a format file named `csv.fmt` in the `csv` container.
+Behind the scenes, the solution uses the T-SQL `BULK INSERT` command to import data read from a .csv file. In order to work the command needs a format file named `csv.fmt` in `_auto` folder the `csv` container.
 
-    az storage blob upload --container-name csv --file SQL\csv.fmt --name csv.fmt --account-name csvimportdemo --account-key <your-account-key>
+    az storage blob upload --container-name csv --file SQL\csv.fmt --name _auto\csv.fmt --account-name csvimportdemo --account-key <your-account-key>
 
-As mentioned before, the easiest way is to use [Azure Storage Explorer](https://azure.microsoft.com/en-us/features/storage-explorer/).
+As mentioned before, the easiest way is to use [Azure Storage Explorer](https://azure.microsoft.com/en-us/features/storage-explorer/). Make sure you create the `_auto` folder manually if you use Azure Storage Explorer.
 
 ## Configure Bulk Load Security
 
@@ -95,13 +95,13 @@ You can now run the Function app on your machine, or you can deploy using Visual
 
 ## Test the solution
 
-All the CSV  file that will be copied into the `csv` container will be loaded into Azure SQL and specifically into the following tables:
+All the CSV files that will be copied into the `csv` container, `_auto` folder, will be loaded into Azure SQL and specifically into the following tables:
 
 - File
 - FileData
 
 To test the everything works copy the `test.csv` file to Azure:
 
-    az storage blob upload --container-name csv --file SQL\test.csv --name test.csv --account-name csvimportdemo --account-key <your-account-key>
+    az storage blob upload --container-name csv --file SQL\test.csv --name _auto\test.csv --account-name csvimportdemo --account-key <your-account-key>
 
-if you open Function App Log you will see that the function has been invoked or, if you're running the function locally on your machine, you will see the log directly on the console. You will find the content of the `test.csv'` file into Azure SQL.
+or, if you prefer, just use Azure Storage Explorer, and drag on drop the file into the `_auto` folder. If you open Function App Log you will see that the function has been invoked or, if you're running the function locally on your machine, you will see the log directly on the console. You will find the content of the `test.csv` file into Azure SQL.

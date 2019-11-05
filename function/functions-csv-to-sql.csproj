@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <AzureFunctionsVersion>v2</AzureFunctionsVersion>
-    <RootNamespace>PASS2019.Microsoft.Samples</RootNamespace>
+    <RootNamespace>Microsoft.AzureSQL.Samples</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.30" />

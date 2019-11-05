@@ -9,12 +9,12 @@ using System.Data;
 using Microsoft.Data.SqlClient;
 using Dapper;
 
-namespace PASS2019.Microsoft.Samples
+namespace Microsoft.AzureSQL.Samples
 {
     public static class ImportCSV
     {
         [FunctionName("ImportCSV")]
-        public static void Run([BlobTrigger("csv/{name}", Connection = "AzureStorage")]Stream blob, string name, ILogger log)
+        public static void Run([BlobTrigger("csv/_auto/{name}", Connection = "AzureStorage")]Stream blob, string name, ILogger log)
         {
             log.LogInformation($"Blob trigger function processed blob: {name}, size: {blob.Length} bytes");
 

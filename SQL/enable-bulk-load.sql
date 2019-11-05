@@ -1,11 +1,4 @@
 /*
-	Create User used by Azure Functions
-*/
-CREATE USER [demo] WITH PASSWORD = 'AVery?STRONGPa22W0rd!';
-ALTER ROLE [db_owner] ADD MEMBER [demo]
-GO
-
-/*
 	Create a database Master Key to store credentials
 */
 CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'A-$tr0ng|PaSSw0Rd!';
